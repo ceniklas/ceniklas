@@ -14,7 +14,8 @@ chmod +x ~/.cush.function
 
 if grep -Fq "function cush" ~/.zshrc
 then
-    echo 'Looks like you already have cush in .zshrc'
+  echo 'cush updated to latest and greatest!'
 else
-    echo 'function cush () { ~/.cush.function }' >> ~/.zshrc
+  echo 'function cush () { ~/.cush.function }' >> ~/.zshrc
+  echo 'cush installed!'
 fi
