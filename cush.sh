@@ -1,4 +1,5 @@
 touch ~/.cush.function
+
 echo 'branch=$(git branch --show-current)
 if [[ $branch == "master" ]];
 then
@@ -8,14 +9,12 @@ else
   cowsay -s -f head-in "Oh ya..."
 fi
 ' > ~/.cush.function
+
 chmod +x ~/.cush.function
 
-
-# branch=$(git branch --show-current)
-# if [[ $branch == "master" ]];
-# then
-#   cowsay -s -f tux "No, you're on master."
-# else
-#   git commit -m "WIP $(curl -s http://whatthecommit.com/index.txt)" --no-verify && git push -u origin HEAD --no-verify
-#   cowsay -s -f head-in "Oh ya..."
-# fi
+if grep -Fq "function cush" ~/.zshrc
+then
+    echo 'Looks like you already have cush in .zshrc'
+else
+    echo 'function cush () { ~/.cush.function }' >> ~/.zshrc
+fi
