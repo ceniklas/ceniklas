@@ -5,8 +5,11 @@ executeorder66git='git fetch -p && for x in $(git for-each-ref --format '\''%(re
 executeorder66bye='cowsay -f vader "Yes my master."'
 
 echo $executeorder66welcome > ~/.executeorder66.function
+echo "\n" >> ~/.executeorder66.function
 echo $executeorder66git >> ~/.executeorder66.function
+echo "\n" >> ~/.executeorder66.function
 echo $executeorder66bye >> ~/.executeorder66.function
+echo "\n" >> ~/.executeorder66.function
 
 chmod +x ~/.executeorder66.function
 
