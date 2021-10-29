@@ -15,7 +15,7 @@ chmod +x ~/.executeorder66.function
 
 zshrcfunction='function executeorder66 () { ~/.executeorder66.function }'
 
-if grep -Fq zshrcfunction ~/.zshrc
+if grep -Fq "$zshrcfunction" ~/.zshrc
 then
   echo 'executeorder66 updated to latest and greatest!'
 elif grep -Fq "function executeorder66" ~/.zshrc
@@ -23,7 +23,7 @@ then
   echo "Replacing old"
   sed -i '' 's+function executeorder66.*}+function executeorder66 () { ~/.executeorder66.function }+g' ~/.zshrc
 else
-  echo zshrcfunction >> ~/.zshrc
+  echo "$zshrcfunction" >> ~/.zshrc
   echo 'executeorder66 installed!'
 fi
 
