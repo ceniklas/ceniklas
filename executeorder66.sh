@@ -24,6 +24,7 @@ if [ -n "$($SHELL -c 'echo $ZSH_VERSION')" ]; then
   else
     echo $profilefunction >>~/.zshrc
     echo 'executeorder66 installed!'
+    source ~/.zshrc
   fi
 elif [ -n "$($SHELL -c 'echo $BASH_VERSION')" ]; then
   # assume Bash
