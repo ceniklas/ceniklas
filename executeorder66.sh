@@ -19,7 +19,7 @@ profilefunction='function executeorder66 () { ~/.executeorder66.function }'
 
 if [ -n "$($SHELL -c 'echo $ZSH_VERSION')" ]; then
   # assume Zsh
-  if grep -Fq "function executeorder66" ~/.zshrc; then
+  if grep -Fq "$profilefunction" ~/.zshrc; then
     echo 'executeorder66 updated to latest and greatest!'
   else
     echo $profilefunction >>~/.zshrc

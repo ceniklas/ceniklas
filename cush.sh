@@ -1,9 +1,9 @@
 touch ~/.cush.function
 
 echo 'branch=$(git branch --show-current)
-if [[ $branch == "master" ]];
+if [ $branch = "master" ] || [ $branch = "main" ]
 then
-  cowsay -s -f tux "No, you are on master."
+  cowsay -s -f tux "No, you are on $branch."
 else
   git commit -m "WIP $(curl -s http://whatthecommit.com/index.txt)" --no-verify && git push -u origin HEAD --no-verify
   cowsay -s -f head-in "Oh ya..."
