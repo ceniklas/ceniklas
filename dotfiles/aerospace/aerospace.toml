@@ -1,0 +1,168 @@
+# AeroSpace (macOS) — mirrors dotfiles/sway/config section by section.
+#
+# Modifier model (see README):
+#   "hyper" = ctrl-alt-cmd. Karabiner produces it from the physical Win key and
+#   Caps Lock on external keyboards, and from Option and Caps Lock on the
+#   built-in keyboard. On Linux the same physical key is Super ($mod = Mod4).
+#   Every binding below is hyper-<key>, written as ctrl-alt-cmd-<key>.
+#
+# Keep the SECTION ORDER and KEYS identical to the sway config when editing.
+
+config-version = 2
+after-startup-command = []
+start-at-login = true
+
+enable-normalization-flatten-containers = true
+enable-normalization-opposite-orientation-for-nested-containers = true
+accordion-padding = 30
+default-root-container-layout = 'tiles'
+default-root-container-orientation = 'auto'
+
+# No mouse callbacks: one accessibility round-trip less per focus change.
+on-focused-monitor-changed = []
+on-mode-changed = []
+
+# Physical Ctrl+H is Cmd+H in GUI apps after the Karabiner swap; never let that hide an app.
+automatically-unhide-macos-hidden-apps = true
+
+# 1-9 free-form, T terminal, B browser, C chat, M mail. (Was 35; fewer = less lag.)
+persistent-workspaces = ['1', '2', '3', '4', '5', '6', '7', '8', '9', 'T', 'B', 'C', 'M']
+
+[key-mapping]
+    preset = 'qwerty'
+
+[gaps]
+    inner.horizontal = 0
+    inner.vertical   = 0
+    outer.left       = 0
+    outer.bottom     = 0
+    outer.top        = 0
+    outer.right      = 0
+
+# --- App homes and floating windows -----------------------------------------
+# sway equivalent: assign / for_window in dotfiles/sway/config (none yet on Linux).
+[[on-window-detected]]
+    if = 'test %{app-bundle-id} = com.mitchellh.ghostty'
+    run = 'move-node-to-workspace T'
+
+[[on-window-detected]]
+    if = 'test %{app-bundle-id} = org.mozilla.firefox'
+    run = 'move-node-to-workspace B'
+
+[[on-window-detected]]
+    if = 'test %{app-bundle-id} = com.brave.Browser'
+    run = 'move-node-to-workspace B'
+
+[[on-window-detected]]
+    if = 'test %{app-bundle-id} = com.microsoft.teams2'
+    run = 'move-node-to-workspace C'
+
+[[on-window-detected]]
+    if = 'test %{app-bundle-id} = com.tinyspeck.slackmacgap'
+    run = 'move-node-to-workspace C'
+
+[[on-window-detected]]
+    if = 'test %{app-bundle-id} = com.microsoft.Outlook'
+    run = 'move-node-to-workspace M'
+
+[[on-window-detected]]
+    if = 'test %{app-bundle-id} = com.apple.systempreferences'
+    run = 'layout floating'
+
+[[on-window-detected]]
+    if = 'test %{app-bundle-id} = com.1password.1password'
+    run = 'layout floating'
+
+# --- Main mode ---------------------------------------------------------------
+[mode.main.binding]
+    # Focus / move (vim keys)                     sway: focus / move <dir>
+    ctrl-alt-cmd-h = 'focus left'
+    ctrl-alt-cmd-j = 'focus down'
+    ctrl-alt-cmd-k = 'focus up'
+    ctrl-alt-cmd-l = 'focus right'
+    ctrl-alt-cmd-shift-h = 'move left'
+    ctrl-alt-cmd-shift-j = 'move down'
+    ctrl-alt-cmd-shift-k = 'move up'
+    ctrl-alt-cmd-shift-l = 'move right'
+
+    # Workspaces 1-9                              sway: workspace number N
+    ctrl-alt-cmd-1 = 'workspace 1'
+    ctrl-alt-cmd-2 = 'workspace 2'
+    ctrl-alt-cmd-3 = 'workspace 3'
+    ctrl-alt-cmd-4 = 'workspace 4'
+    ctrl-alt-cmd-5 = 'workspace 5'
+    ctrl-alt-cmd-6 = 'workspace 6'
+    ctrl-alt-cmd-7 = 'workspace 7'
+    ctrl-alt-cmd-8 = 'workspace 8'
+    ctrl-alt-cmd-9 = 'workspace 9'
+    ctrl-alt-cmd-shift-1 = 'move-node-to-workspace 1'
+    ctrl-alt-cmd-shift-2 = 'move-node-to-workspace 2'
+    ctrl-alt-cmd-shift-3 = 'move-node-to-workspace 3'
+    ctrl-alt-cmd-shift-4 = 'move-node-to-workspace 4'
+    ctrl-alt-cmd-shift-5 = 'move-node-to-workspace 5'
+    ctrl-alt-cmd-shift-6 = 'move-node-to-workspace 6'
+    ctrl-alt-cmd-shift-7 = 'move-node-to-workspace 7'
+    ctrl-alt-cmd-shift-8 = 'move-node-to-workspace 8'
+    ctrl-alt-cmd-shift-9 = 'move-node-to-workspace 9'
+
+    # Named app homes: T terminal, B browser, C chat, M mail
+    ctrl-alt-cmd-t = 'workspace T'
+    ctrl-alt-cmd-b = 'workspace B'
+    ctrl-alt-cmd-c = 'workspace C'
+    ctrl-alt-cmd-m = 'workspace M'
+    ctrl-alt-cmd-shift-t = 'move-node-to-workspace T'
+    ctrl-alt-cmd-shift-b = 'move-node-to-workspace B'
+    ctrl-alt-cmd-shift-c = 'move-node-to-workspace C'
+    ctrl-alt-cmd-shift-m = 'move-node-to-workspace M'
+
+    # Previous workspace                          sway: workspace back_and_forth
+    ctrl-alt-cmd-tab = 'workspace-back-and-forth'
+
+    # Terminal: lands in zellij session "main" (zshrc auto-attach) / plain shell
+    ctrl-alt-cmd-enter = 'exec-and-forget open -na Ghostty'
+    ctrl-alt-cmd-shift-enter = 'exec-and-forget open -na Ghostty --args -e env ZELLIJ_AUTO=0 zsh -il'
+
+    # Launcher and language switch are deliberately UNBOUND here so macOS gets them:
+    #   hyper-space       -> Raycast (set its hotkey to ctrl+alt+cmd+space)
+    #   hyper-shift-space -> Input Sources "Select next source" (System Settings > Keyboard > Shortcuts)
+    # sway: exec fuzzel / xkb_switch_layout next
+
+    # Window                                      sway: kill / fullscreen / floating toggle
+    ctrl-alt-cmd-shift-q = 'close'
+    ctrl-alt-cmd-f = 'fullscreen'
+    ctrl-alt-cmd-shift-f = 'layout floating tiling'
+
+    # Layout                                      sway: layout toggle split / tabbed / stacking
+    ctrl-alt-cmd-e = 'layout tiles horizontal vertical'
+    ctrl-alt-cmd-w = 'layout h_accordion'
+    ctrl-alt-cmd-s = 'layout v_accordion'
+
+    # Modes
+    ctrl-alt-cmd-r = 'mode resize'
+    ctrl-alt-cmd-shift-semicolon = 'mode service'
+
+    # Lock (display sleep locks when "require password" is on)   sway: swaylock
+    ctrl-alt-cmd-shift-x = 'exec-and-forget pmset displaysleepnow'
+
+# --- Resize mode --------------------------------------------------------------
+[mode.resize.binding]
+    h = 'resize width -50'
+    j = 'resize height +50'
+    k = 'resize height -50'
+    l = 'resize width +50'
+    minus = 'resize smart -50'
+    equal = 'resize smart +50'
+    enter = 'mode main'
+    esc = 'mode main'
+
+# --- Service mode -------------------------------------------------------------
+[mode.service.binding]
+    esc = ['reload-config', 'mode main']                 # sway: reload
+    f = ['layout floating tiling', 'mode main']          # sway: floating toggle
+    r = ['flatten-workspace-tree', 'mode main']          # macOS only: reset layout
+    backspace = ['close-all-windows-but-current', 'mode main']  # macOS only
+    # join-with has no sway equivalent; kept from the old config.
+    ctrl-alt-cmd-shift-h = ['join-with left', 'mode main']
+    ctrl-alt-cmd-shift-j = ['join-with down', 'mode main']
+    ctrl-alt-cmd-shift-k = ['join-with up', 'mode main']
+    ctrl-alt-cmd-shift-l = ['join-with right', 'mode main']

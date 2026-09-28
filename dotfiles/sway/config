@@ -1,0 +1,160 @@
+# sway (Linux/Wayland) — mirrors dotfiles/aerospace/aerospace.toml section by section.
+#
+# Modifier model (see README):
+#   $mod = Mod4 = the physical Win key. Caps Lock is also Super via xkb caps:super.
+#   On macOS the same physical keys emit "hyper" (ctrl-alt-cmd) through Karabiner.
+#
+# Keep the SECTION ORDER and KEYS identical to the Aerospace config when editing.
+
+set $mod Mod4
+set $term ghostty
+set $menu fuzzel
+
+# Debian ships systemd/portal integration here (needed for screen sharing etc).
+include /etc/sway/config.d/*
+
+# --- Look --------------------------------------------------------------------
+font pango:JetBrainsMono Nerd Font 10
+output * bg #1e1e2e solid_color
+default_border pixel 2
+default_floating_border pixel 2
+gaps inner 0
+gaps outer 0
+focus_follows_mouse no
+# class                 border  bg      text    indicator child_border
+client.focused          #89b4fa #1e1e2e #cdd6f4 #f5e0dc   #89b4fa
+client.focused_inactive #45475a #1e1e2e #cdd6f4 #45475a   #45475a
+client.unfocused        #313244 #1e1e2e #a6adc8 #313244   #313244
+client.urgent           #f38ba8 #1e1e2e #cdd6f4 #f38ba8   #f38ba8
+
+# --- Input -------------------------------------------------------------------
+# us(intl) = macOS "U.S. International - PC": same key positions, same dead keys.
+# se = Swedish. hyper+Shift+space switches (bound below, mirrors macOS Input Sources).
+input type:keyboard {
+    xkb_layout us,se
+    xkb_variant intl,
+    xkb_options caps:super
+    repeat_delay 250
+    repeat_rate 40
+}
+input type:touchpad {
+    tap enabled
+    natural_scroll enabled
+}
+
+# --- Idle / lock ----------------------------------------------------------------
+exec swayidle -w timeout 600 'swaylock -f' before-sleep 'swaylock -f'
+
+# --- App homes and floating windows -----------------------------------------
+# Aerospace equivalent: [[on-window-detected]] blocks. Teams/Outlook rules
+# intentionally absent on Linux for now.
+assign [app_id="com.mitchellh.ghostty"] workspace T
+assign [app_id="firefox"] workspace B
+assign [app_id="brave-browser"] workspace B
+for_window [app_id="1Password"] floating enable
+
+# --- Main mode ---------------------------------------------------------------
+# Focus / move (vim keys)                        Aerospace: focus / move <dir>
+bindsym --to-code $mod+h focus left
+bindsym --to-code $mod+j focus down
+bindsym --to-code $mod+k focus up
+bindsym --to-code $mod+l focus right
+bindsym --to-code $mod+Shift+h move left
+bindsym --to-code $mod+Shift+j move down
+bindsym --to-code $mod+Shift+k move up
+bindsym --to-code $mod+Shift+l move right
+
+# Workspaces 1-9                                 Aerospace: workspace N
+bindsym $mod+1 workspace number 1
+bindsym $mod+2 workspace number 2
+bindsym $mod+3 workspace number 3
+bindsym $mod+4 workspace number 4
+bindsym $mod+5 workspace number 5
+bindsym $mod+6 workspace number 6
+bindsym $mod+7 workspace number 7
+bindsym $mod+8 workspace number 8
+bindsym $mod+9 workspace number 9
+bindsym $mod+Shift+1 move container to workspace number 1
+bindsym $mod+Shift+2 move container to workspace number 2
+bindsym $mod+Shift+3 move container to workspace number 3
+bindsym $mod+Shift+4 move container to workspace number 4
+bindsym $mod+Shift+5 move container to workspace number 5
+bindsym $mod+Shift+6 move container to workspace number 6
+bindsym $mod+Shift+7 move container to workspace number 7
+bindsym $mod+Shift+8 move container to workspace number 8
+bindsym $mod+Shift+9 move container to workspace number 9
+
+# Named app homes: T terminal, B browser, C chat, M mail
+bindsym --to-code $mod+t workspace T
+bindsym --to-code $mod+b workspace B
+bindsym --to-code $mod+c workspace C
+bindsym --to-code $mod+m workspace M
+bindsym --to-code $mod+Shift+t move container to workspace T
+bindsym --to-code $mod+Shift+b move container to workspace B
+bindsym --to-code $mod+Shift+c move container to workspace C
+bindsym --to-code $mod+Shift+m move container to workspace M
+
+# Previous workspace                             Aerospace: workspace-back-and-forth
+bindsym $mod+Tab workspace back_and_forth
+
+# Terminal: lands in zellij session "main" (zshrc auto-attach) / plain shell
+bindsym $mod+Return exec $term
+bindsym $mod+Shift+Return exec $term -e env ZELLIJ_AUTO=0 zsh -il
+
+# Launcher and language switch                   macOS: Raycast / Input Sources shortcut
+bindsym $mod+space exec $menu
+bindsym $mod+Shift+space exec swaymsg input type:keyboard xkb_switch_layout next
+
+# Window                                         Aerospace: close / fullscreen / layout floating tiling
+bindsym --to-code $mod+Shift+q kill
+bindsym --to-code $mod+f fullscreen toggle
+bindsym --to-code $mod+Shift+f floating toggle
+
+# Layout                                         Aerospace: tiles h/v toggle / h_accordion / v_accordion
+bindsym --to-code $mod+e layout toggle split
+bindsym --to-code $mod+w layout tabbed
+bindsym --to-code $mod+s layout stacking
+
+# Modes
+bindsym --to-code $mod+r mode "resize"
+bindsym $mod+Shift+semicolon mode "service"
+
+# Lock                                           Aerospace: pmset displaysleepnow
+bindsym --to-code $mod+Shift+x exec swaylock -f
+
+# Drag floating windows with $mod + mouse
+floating_modifier $mod normal
+
+# --- Resize mode --------------------------------------------------------------
+mode "resize" {
+    bindsym --to-code h resize shrink width 50px
+    bindsym --to-code j resize grow height 50px
+    bindsym --to-code k resize shrink height 50px
+    bindsym --to-code l resize grow width 50px
+    bindsym minus resize shrink width 50px; resize shrink height 50px
+    bindsym equal resize grow width 50px; resize grow height 50px
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+
+# --- Service mode -------------------------------------------------------------
+mode "service" {
+    bindsym Escape reload; mode "default"                       # Aerospace: reload-config
+    bindsym --to-code f floating toggle; mode "default"         # Aerospace: layout floating tiling
+    bindsym --to-code q exec swaynag -t warning -m 'Exit sway?' -B 'Yes' 'swaymsg exit'; mode "default"  # Linux only
+}
+
+# --- Bar ------------------------------------------------------------------------
+bar {
+    position top
+    font pango:JetBrainsMono Nerd Font 10
+    status_command while date +'%Y-%m-%d %H:%M'; do sleep 30; done
+    colors {
+        statusline #cdd6f4
+        background #1e1e2e
+        focused_workspace  #89b4fa #89b4fa #1e1e2e
+        active_workspace   #45475a #45475a #cdd6f4
+        inactive_workspace #1e1e2e #1e1e2e #a6adc8
+        urgent_workspace   #f38ba8 #f38ba8 #1e1e2e
+    }
+}

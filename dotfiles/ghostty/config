@@ -1,0 +1,37 @@
+# Ghostty — shared between macOS and Linux. Installed as ~/.config/ghostty/config.
+# Ghostty applies config-file includes AFTER this file, so the per-OS overrides
+# live in `local` (a symlink to `macos` or `linux`, created by the installers)
+# and are pulled in by the optional include at the very end.
+
+font-family = JetBrainsMono Nerd Font
+font-size = 12
+theme = Catppuccin Mocha
+
+cursor-style = block
+cursor-style-blink = false
+scrollback-limit = 50000000
+copy-on-select = false
+clipboard-paste-protection = true
+confirm-close-surface = false
+quit-after-last-window-closed = true
+shell-integration = zsh
+
+# The tiling WM draws borders.
+window-decoration = none
+window-padding-x = 4
+window-padding-y = 4
+
+# Keys: Linux semantics on both OSes. Ctrl is never remapped inside Ghostty
+# (Karabiner excludes com.mitchellh.ghostty), so Ctrl+C stays SIGINT.
+# Multiplexing is zellij's job, so Ghostty's own tab/split shortcuts are cleared.
+keybind = clear
+keybind = ctrl+shift+c=copy_to_clipboard
+keybind = ctrl+shift+v=paste_from_clipboard
+keybind = ctrl+shift+n=new_window
+keybind = ctrl+shift+equal=increase_font_size:1
+keybind = ctrl+shift+minus=decrease_font_size:1
+keybind = ctrl+shift+zero=reset_font_size
+keybind = ctrl+shift+r=reload_config
+
+# Per-OS overrides (font-size, option-as-alt). `?` = optional.
+config-file = ?local

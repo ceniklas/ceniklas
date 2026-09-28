@@ -1,0 +1,127 @@
+# ~/.zshrc — shared between macOS and Linux (symlinked from dotfiles/zsh/zshrc).
+# No oh-my-zsh: prompt = starship, plugins cloned to ~/.zsh/plugins by the installers.
+
+# ---------------------------------------------------------------------------
+# PATH
+# ---------------------------------------------------------------------------
+export PATH="$HOME/.local/bin:$PATH"
+
+# ---------------------------------------------------------------------------
+# zellij: a new Ghostty window lands in the persistent session "main".
+# Skipped inside zellij, over ssh, in other terminals (VS Code), or when
+# ZELLIJ_AUTO=0 (the WM's hyper+Shift+Return "plain shell" binding sets it).
+# Closing the window detaches; the session lives on.
+# ---------------------------------------------------------------------------
+if [[ -o interactive && -z "$ZELLIJ" && -z "$SSH_CONNECTION" \
+      && "$TERM_PROGRAM" == "ghostty" && "${ZELLIJ_AUTO:-1}" == "1" ]] \
+   && command -v zellij >/dev/null 2>&1; then
+  exec zellij attach -c main
+fi
+
+# ---------------------------------------------------------------------------
+# History
+# ---------------------------------------------------------------------------
+HISTFILE="$HOME/.zsh_history"
+HISTSIZE=100000
+SAVEHIST=100000
+setopt share_history inc_append_history extended_history
+setopt hist_ignore_all_dups hist_ignore_space hist_reduce_blanks hist_verify
+
+# ---------------------------------------------------------------------------
+# Shell options and keys (emacs line editing, like a Linux shell)
+# ---------------------------------------------------------------------------
+setopt auto_cd interactive_comments no_beep
+bindkey -e
+# Home / End / Delete
+bindkey '^[[H'  beginning-of-line
+bindkey '^[[F'  end-of-line
+bindkey '^[[1~' beginning-of-line
+bindkey '^[[4~' end-of-line
+bindkey '^[[3~' delete-char
+# Ctrl+Left / Ctrl+Right word jump, Ctrl+Backspace / Ctrl+Delete word delete
+bindkey '^[[1;5D' backward-word
+bindkey '^[[1;5C' forward-word
+bindkey '^H'      backward-kill-word
+bindkey '^[[3;5~' kill-word
+
+# ---------------------------------------------------------------------------
+# Completion
+# ---------------------------------------------------------------------------
+[ -d "$HOME/.docker/completions" ] && fpath=("$HOME/.docker/completions" $fpath)
+autoload -Uz compinit
+# Rebuild the completion dump at most once a day.
+if [[ -n "$HOME"/.zcompdump(#qN.mh+24) ]]; then
+  compinit
+else
+  compinit -C
+fi
+zstyle ':completion:*' menu select
+zstyle ':completion:*' list-colors ''
+zstyle ':completion:*' group-name ''
+zstyle ':completion:*:descriptions' format '%F{yellow}-- %d --%f'
+
+# ---------------------------------------------------------------------------
+# Plugins (cloned by install-mac.sh / install-linux.sh)
+# ---------------------------------------------------------------------------
+ZSH_PLUGINS="$HOME/.zsh/plugins"
+[ -f "$ZSH_PLUGINS/zsh-autosuggestions/zsh-autosuggestions.zsh" ] && \
+  source "$ZSH_PLUGINS/zsh-autosuggestions/zsh-autosuggestions.zsh"
+
+# ---------------------------------------------------------------------------
+# nvm (Homebrew location on macOS, ~/.nvm elsewhere)
+# ---------------------------------------------------------------------------
+export NVM_DIR="$HOME/.nvm"
+for _nvm in /opt/homebrew/opt/nvm/nvm.sh "$NVM_DIR/nvm.sh"; do
+  if [ -s "$_nvm" ]; then . "$_nvm"; break; fi
+done
+unset _nvm
+[ -s /opt/homebrew/opt/nvm/etc/bash_completion.d/nvm ] && . /opt/homebrew/opt/nvm/etc/bash_completion.d/nvm
+
+# ---------------------------------------------------------------------------
+# Aliases
+# ---------------------------------------------------------------------------
+# g<alias> shortcut for every alias defined in your git config (e.g. gco, gs, glg)
+for al in $(git --list-cmds=alias 2>/dev/null); do
+  alias "g$al"="git $al"
+done
+
+# Kubernetes: route every kubectl call through kubesafe when it is installed.
+if command -v kubesafe >/dev/null 2>&1; then
+  alias kubectl='kubesafe kubectl'
+fi
+alias k='kubectl'
+alias kctx='kubectx'
+alias kns='kubens'
+alias mk='minikube kubectl --'
+
+# ---------------------------------------------------------------------------
+# Tool completions and integrations (need compinit; guarded so they no-op when absent)
+# ---------------------------------------------------------------------------
+command -v kubectl  >/dev/null 2>&1 && source <(\kubectl completion zsh)
+command -v kubesafe >/dev/null 2>&1 && source <(kubesafe completion zsh)
+command -v fzf      >/dev/null 2>&1 && source <(fzf --zsh 2>/dev/null)
+command -v zoxide   >/dev/null 2>&1 && eval "$(zoxide init zsh)"
+
+# ---------------------------------------------------------------------------
+# Repo helper functions (installed by cush.sh / executeorder66.sh)
+# ---------------------------------------------------------------------------
+[ -x "$HOME/.cush.function" ] && function cush () { ~/.cush.function }
+[ -x "$HOME/.executeorder66.function" ] && function executeorder66 () { ~/.executeorder66.function }
+
+# ---------------------------------------------------------------------------
+# Prompt
+# ---------------------------------------------------------------------------
+if command -v starship >/dev/null 2>&1; then
+  eval "$(starship init zsh)"
+else
+  PROMPT='%F{blue}%~%f %# '   # fallback until starship is installed
+fi
+
+# ---------------------------------------------------------------------------
+# Syntax highlighting must be sourced last.
+# ---------------------------------------------------------------------------
+[ -f "$ZSH_PLUGINS/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ] && \
+  source "$ZSH_PLUGINS/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+
+# Machine-local overrides (not in the repo)
+[ -f "$HOME/.zshrc.local" ] && source "$HOME/.zshrc.local"

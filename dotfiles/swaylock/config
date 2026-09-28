@@ -1,0 +1,9 @@
+# swaylock — hyper+Shift+x and on idle. macOS counterpart: pmset displaysleepnow.
+color=1e1e2e
+ring-color=89b4fa
+inside-color=1e1e2e
+key-hl-color=a6e3a1
+text-color=cdd6f4
+ignore-empty-password
+show-failed-attempts
+indicator-radius=100

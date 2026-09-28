@@ -1,0 +1,4 @@
+# Karabiner writes these next to its config
+dotfiles/karabiner/automatic_backups/
+dotfiles/karabiner/assets/
+*.bak.*

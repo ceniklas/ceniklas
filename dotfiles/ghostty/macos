@@ -1,0 +1,7 @@
+# Ghostty — macOS overrides. Installed as ~/.config/ghostty/local.
+font-size = 14
+# Left Alt sends Alt (Meta) to zellij/zsh/nvim like on Linux.
+# Right Alt keeps macOS special characters, mirroring AltGr on the PC layout.
+macos-option-as-alt = left
+# A fresh `open -na Ghostty` must not resurrect old windows next to the one asked for.
+window-save-state = never
