@@ -7,6 +7,16 @@
 export PATH="$HOME/.local/bin:$PATH"
 
 # ---------------------------------------------------------------------------
+# Claude Code sets these to mark a session as a nested/child subprocess, which
+# excludes it from --resume/--continue history. Once set in one zellij pane
+# (e.g. Ghostty launched from inside a Claude Code session), the zellij
+# session's panes keep inheriting them forever, silently breaking resume for
+# every future `claude` invocation in that session. Clear them on every shell
+# start so new panes are never contaminated.
+# ---------------------------------------------------------------------------
+unset CLAUDECODE CLAUDE_CODE_CHILD_SESSION
+
+# ---------------------------------------------------------------------------
 # zellij: a new Ghostty window lands in the persistent session "main".
 # Skipped inside zellij, over ssh, in other terminals (VS Code), or when
 # ZELLIJ_AUTO=0 (the WM's hyper+Shift+Return "plain shell" binding sets it).
@@ -84,6 +94,10 @@ unset _nvm
 for al in $(git --list-cmds=alias 2>/dev/null); do
   alias "g$al"="git $al"
 done
+
+# Carried over from the Oh My Zsh git plugin (dropped when it was removed).
+alias g='git'
+alias gf='git fetch'
 
 # Kubernetes: route every kubectl call through kubesafe when it is installed.
 if command -v kubesafe >/dev/null 2>&1; then
