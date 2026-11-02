@@ -88,6 +88,7 @@ link "$DOT/swaylock/config"         "$HOME/.config/swaylock/config"
 link "$DOT/ghostty/config"          "$HOME/.config/ghostty/config"
 link "$DOT/ghostty/linux"           "$HOME/.config/ghostty/local"
 link "$DOT/zellij/config.kdl"       "$HOME/.config/zellij/config.kdl"
+link "$DOT/claude/zellij-status.sh" "$HOME/.claude/zellij-status.sh"
 link "$DOT/starship/starship.toml"  "$HOME/.config/starship.toml"
 
 # --- 4. Default shell ----------------------------------------------------------

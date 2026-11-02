@@ -61,6 +61,7 @@ link "$DOT/karabiner"                 "$HOME/.config/karabiner"      # whole dir
 link "$DOT/ghostty/config"            "$HOME/.config/ghostty/config"
 link "$DOT/ghostty/macos"             "$HOME/.config/ghostty/local"
 link "$DOT/zellij/config.kdl"         "$HOME/.config/zellij/config.kdl"
+link "$DOT/claude/zellij-status.sh"   "$HOME/.claude/zellij-status.sh"
 link "$DOT/starship/starship.toml"    "$HOME/.config/starship.toml"
 
 # --- 4. Retire Hyperkey, but only once Karabiner exists to take over Caps Lock --
